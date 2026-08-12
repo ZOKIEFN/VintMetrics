@@ -371,7 +371,6 @@
       background:rgba(255,255,255,.06)
     }
 
-    /* BOUTONS MODIFIER + DUPLIQUER */
     .product-actions{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -1559,10 +1558,16 @@ function renderStock(){
           (i.sku||'').toLowerCase().includes(q)
         )
     )
-    .sort(
-      (a,b)=>
-        (b.dateAdded||'').localeCompare(a.dateAdded||'')
-    );
+    .sort((a,b)=>{
+
+      // Les articles vendus apparaissent toujours en bas
+      if(a.status==='vendu' && b.status!=='vendu') return 1;
+      if(a.status!=='vendu' && b.status==='vendu') return -1;
+
+      // Dans chaque groupe, les articles les plus récents restent en premier
+      return (b.dateAdded||'').localeCompare(a.dateAdded||'');
+
+    });
 
   const box=document.getElementById('products');
 
@@ -1910,8 +1915,6 @@ function deleteItem(){
   toast('Article supprimé');
 }
 
-
-/* DUPLIQUER UN ARTICLE */
 
 function duplicateItem(id){
 
